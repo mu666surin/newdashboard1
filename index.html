@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard ข้อมูลสมาชิกสามัญและสมทบ ปีงบประมาณ 2569 - 2570</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #3b82f6;
+            --accent: #10b981;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+            --gray-cool: #64748b;
+            --orange-light: #fdba74;
+            --purple-light: #a855f7;
+            --indigo-teal: #0369a1;
+            --rose-pink: #ec4899;
+            --yellow-soft: #fde047;
+            --brown-warm: #92400e;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding: 20px; }
+        .container { max-width: 1600px; margin: 0 auto; }
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; padding: 25px 30px; border-radius: 12px; margin-bottom: 20px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+        }
+        header h1 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+        header p { font-size: 16px; opacity: 0.9; }
+        .filters { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+        .search-box { flex: 1; min-width: 280px; position: relative; }
+        .search-box input {
+            width: 100%; padding: 12px 15px 12px 45px; border: 1px solid var(--border-color);
+            border-radius: 8px; font-size: 16px; outline: none; background: white; transition: all 0.3s;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .search-box input:focus { border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15), inset 0 2px 4px rgba(0,0,0,0.02); }
+        .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 18px; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; flex-wrap: wrap; }
+        .tab-btn {
+            background: white; border: 1px solid var(--border-color); padding: 10px 18px;
+            border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 500; color: var(--text-color); transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .tab-btn:hover { background: #f1f5f9; transform: translateY(-1px); }
+        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 6px -1px rgba(30,58,138,0.2); }
+        .card { background: var(--card-bg); border-radius: 12px; box-shadow: 0 6px 12px -2px rgba(0,0,0,0.08), 0 3px 6px -1px rgba(0,0,0,0.04); padding: 20px; margin-bottom: 25px; border: 1px solid var(--border-color); transition: transform 0.2s; }
+        .table-responsive { overflow-x: auto; max-height: 620px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+        th, td { padding: 10px 10px; border-bottom: 1px solid var(--border-color); white-space: nowrap; text-align: center; }
+        td:nth-child(2) { text-align: left; }
+        th { background-color: #f1f5f9; color: #334155; font-weight: 600; position: sticky; top: 0; z-index: 10; }
+        tr:hover { background-color: #f8fafc; }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+        .badge-sk { background: #dbeafe; color: #1e40af; }
+        .badge-group { background: #d1fae5; color: #065f46; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .chart-container { position: relative; height: 420px; width: 100%; margin-top: 15px; }
+        .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin-bottom: 25px; }
+        .grid-2 > .card, .single-chart-card { margin-bottom: 0; background: #f8fafc; }
+        .single-chart-card { margin-bottom: 25px; }
+        .select-box { margin-bottom: 12px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .select-box select { padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); font-size: 15px; font-family: 'Sarabun', sans-serif; outline: none; background: white; box-shadow: inset 0 1px 2px rgba(0,0,0,0.02); }
+        .meta-pill {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #ffffff; border: 1px solid var(--border-color);
+            color: #475569; padding: 6px 12px; border-radius: 20px; font-size: 13px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        }
+        h3.chart-title { margin-bottom: 12px; color: var(--primary); font-size: 17px; }
+        @media (max-width: 1024px) { .grid-2 { grid-template-columns: 1fr; } }
+        canvas { filter: drop-shadow(3px 6px 8px rgba(0,0,0,0.12)); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1><i class="fa-solid fa-chart-line"></i> ระบบ Dashboard ข้อมูลสมาชิก (กลุ่มส่งเสริมสหกรณ์ 6)</h1>
+        <p>เปรียบเทียบข้อมูลรายแห่งรายเดือน ปีงบประมาณ 2569 และ 2570 (สหกรณ์และกลุ่มเกษตรกร)</p>
+    </header>
+
+    <div class="filters">
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" placeholder="ค้นหาชื่อสถาบันเกษตรกรในตาราง (เช่น รัตนบุรี, สนม, ดอนแรด)..." onkeyup="filterTables()">
+        </div>
+    </div>
+
+    <!-- แท็บเมนูทั้ง 5 แท็บ -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('tab1', event)"><i class="fa-solid fa-chart-column"></i> 1. กราฟรายแห่งและกราฟภาพรวม</button>
+        <button class="tab-btn" onclick="switchTab('tab2', event)"><i class="fa-solid fa-table"></i> 2. ข้อมูลสมาชิกสามัญและสมทบ (ปีงบ 69)</button>
+        <button class="tab-btn" onclick="switchTab('tab3', event)"><i class="fa-solid fa-table"></i> 3. ข้อมูลสมาชิกสามัญและสมทบ (ปีงบ 70)</button>
+        <button class="tab-btn" onclick="switchTab('tab4', event)"><i class="fa-solid fa-percent"></i> 4. ข้อมูลส่วนร่วมสามัญร้อยละ (%) ปีงบ 69</button>
+        <button class="tab-btn" onclick="switchTab('tab5', event)"><i class="fa-solid fa-percent"></i> 5. ข้อมูลส่วนร่วมสามัญร้อยละ (%) ปีงบ 70</button>
+    </div>
+
+    <!-- Tab 1: กราฟรายแห่งและกราฟภาพรวม -->
+    <div id="tab1" class="card tab-content active">
+
+        <!-- แถว 1: กราฟแสดงสัดส่วนสมาชิกสามัญและสมทบรายแห่ง (เดือนที่รายงานล่าสุด) -->
+        <div class="card single-chart-card">
+            <h3 class="chart-title"><i class="fa-solid fa-chart-pie"></i> กราฟแสดงสัดส่วนสมาชิกสามัญและสมทบรายแห่ง (เดือนที่รายงานล่าสุด)</h3>
+            <div class="select-box">
+                <label for="pieSelect" style="font-weight: 600;">เลือกสถาบันเกษตรกร:</label>
+                <select id="pieSelect" onchange="updatePieChart()"></select>
+                <span id="pieLatestMeta" class="meta-pill"><i class="fa-regular fa-calendar-check"></i> เดือนที่รายงานล่าสุด: -</span>
+            </div>
+            <div class="chart-container">
+                <canvas id="pieChart"></canvas>
+            </div>
+        </div>
+
+        <!-- แถว 2: กราฟจัดอันดับจำนวนสมาชิกภาพรวมสหกรณ์ และ กลุ่มเกษตรกร รายแห่งสูงสุด (เดือนที่รายงานล่าสุด) -->
+        <div class="grid-2">
+            <div class="card">
+                <h3 class="chart-title"><i class="fa-solid fa-ranking-star"></i> กราฟแสดงจำนวนสมาชิกภาพรวมสหกรณ์รายแห่งสูงสุด (เดือนที่รายงานล่าสุด)</h3>
+                <div class="chart-container">
+                    <canvas id="coopRankChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="chart-title"><i class="fa-solid fa-ranking-star"></i> กราฟแสดงจำนวนสมาชิกภาพรวมกลุ่มเกษตรกรรายแห่งสูงสุด (เดือนที่รายงานล่าสุด)</h3>
+                <div class="chart-container">
+                    <canvas id="groupRankChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- แถว 3: กราฟแสดง Trend จำนวนสมาชิกสามัญและสมทบรายแห่ง ปีงบ 69 คู่กับ ปีงบ 70 -->
+        <div class="grid-2">
+            <div class="card">
+                <h3 class="chart-title"><i class="fa-solid fa-chart-line"></i> กราฟแสดง Trend จำนวนสมาชิกสามัญและสมทบรายแห่ง ปีงบ 69</h3>
+                <div class="select-box">
+                    <label for="institutionSelect69" style="font-weight: 600;">เลือกสถาบันเกษตรกร:</label>
+                    <select id="institutionSelect69" onchange="updateInstitutionChart69()"></select>
+                </div>
+                <div class="chart-container">
+                    <canvas id="institutionChart69"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="chart-title"><i class="fa-solid fa-chart-line"></i> กราฟแสดง Trend จำนวนสมาชิกสามัญและสมทบรายแห่ง ปีงบ 70</h3>
+                <div class="select-box">
+                    <label for="institutionSelect70" style="font-weight: 600;">เลือกสถาบันเกษตรกร:</label>
+                    <select id="institutionSelect70" onchange="updateInstitutionChart70()"></select>
+                </div>
+                <div class="chart-container">
+                    <canvas id="institutionChart70"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- แถว 4: กราฟแสดง Trend จำนวนสมาชิกภาพรวม (สามัญและสมทบ) รายเดือน ปีงบ 69 คู่กับ ปีงบ 70 -->
+        <div class="grid-2">
+            <div class="card">
+                <h3 class="chart-title"><i class="fa-solid fa-chart-column"></i> กราฟแสดง Trend จำนวนสมาชิกภาพรวม (สามัญและสมทบ) รายเดือน ปีงบ 69 (14 สถาบัน)</h3>
+                <div class="chart-container">
+                    <canvas id="barChart69"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="chart-title"><i class="fa-solid fa-chart-column"></i> กราฟแสดง Trend จำนวนสมาชิกภาพรวม (สามัญและสมทบ) รายเดือน ปีงบ 70 (14 สถาบัน)</h3>
+                <div class="chart-container">
+                    <canvas id="barChart70"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- แถว 5: กราฟแสดงส่วนร่วมสามัญร้อยละ (%) รายแห่ง (เดือนที่รายงานล่าสุด) -->
+        <div class="card single-chart-card">
+            <h3 class="chart-title"><i class="fa-solid fa-chart-pie"></i> กราฟแสดงส่วนร่วมสามัญร้อยละ (%) รายแห่ง (เดือนที่รายงานล่าสุด)</h3>
+            <div class="select-box">
+                <label for="pctPieSelect" style="font-weight: 600;">เลือกสถาบันเกษตรกร:</label>
+                <select id="pctPieSelect" onchange="updatePctPieChart()"></select>
+                <span id="pctPieLatestMeta" class="meta-pill"><i class="fa-regular fa-calendar-check"></i> เดือนที่รายงานล่าสุด: -</span>
+            </div>
+            <div class="chart-container">
+                <canvas id="pctPieChart"></canvas>
+            </div>
+        </div>
+
+        <!-- แถว 6: กราฟแสดงส่วนร่วมสามัญของสหกรณ์ และ ของกลุ่มเกษตรกร ร้อยละ (%) รายแห่งสูงสุด (เดือนที่รายงานล่าสุด) -->
+        <div class="grid-2">
+            <div class="card">
+                <h3 class="chart-title"><i class="fa-solid fa-ranking-star"></i> กราฟแสดงส่วนร่วมสามัญของสหกรณ์ ร้อยละ (%) รายแห่งสูงสุด (เดือนที่รายงานล่าสุด)</h3>
+                <div class="chart-container">
+                    <canvas id="coopPctRankChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="chart-title"><i class="fa-solid fa-ranking-star"></i> กราฟแสดงส่วนร่วมสามัญของกลุ่มเกษตรกร ร้อยละ (%) รายแห่งสูงสุด (เดือนที่รายงานล่าสุด)</h3>
+                <div class="chart-container">
+                    <canvas id="groupPctRankChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- แถว 7: กราฟแสดง Trend ส่วนร่วมสามัญร้อยละ (%) รายแห่ง ปีงบ 69 คู่กับ ปีงบ 70 -->
+        <div class="grid-2">
+            <div class="card">
+                <h3 class="chart-title"><i class="fa-solid fa-chart-area"></i> กราฟแสดง Trend ส่วนร่วมสามัญร้อยละ (%) รายแห่ง ปีงบ 69</h3>
+                <div class="select-box">
+                    <label for="percentSelect69" style="font-weight: 600;">เลือกสถาบันเกษตรกร:</label>
+                    <select id="percentSelect69" onchange="updatePercentChart69()"></select>
+                </div>
+                <div class="chart-container">
+                    <canvas id="percentChart69"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="chart-title"><i class="fa-solid fa-chart-area"></i> กราฟแสดง Trend ส่วนร่วมสามัญร้อยละ (%) รายแห่ง ปีงบ 70</h3>
+                <div class="select-box">
+                    <label for="percentSelect70" style="font-weight: 600;">เลือกสถาบันเกษตรกร:</label>
+                    <select id="percentSelect70" onchange="updatePercentChart70()"></select>
+                </div>
+                <div class="chart-container">
+                    <canvas id="percentChart70"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- แถว 8: กราฟแสดงค่าเฉลี่ยร้อยละ (%) Trend การร่วมดำเนินธุรกิจสมาชิกสามัญรายเดือน ปีงบ 69 คู่กับ ปีงบ 70 -->
+        <div class="grid-2" style="margin-bottom: 0;">
+            <div class="card">
+                <h3 class="chart-title"><i class="fa-solid fa-chart-line"></i> กราฟแสดงค่าเฉลี่ยร้อยละ (%) Trend การร่วมดำเนินธุรกิจสมาชิกสามัญรายเดือน ปีงบ 69 (14 สถาบัน)</h3>
+                <div class="chart-container">
+                    <canvas id="lineChart69"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="chart-title"><i class="fa-solid fa-chart-line"></i> กราฟแสดงค่าเฉลี่ยร้อยละ (%) Trend การร่วมดำเนินธุรกิจสมาชิกสามัญรายเดือน ปีงบ 70 (14 สถาบัน)</h3>
+                <div class="chart-container">
+                    <canvas id="lineChart70"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Tab 2: ข้อมูลสมาชิกสามัญและสมทบ (ปีงบ 69) -->
+    <div id="tab2" class="card tab-content">
+        <h3 style="margin-bottom: 15px; color: var(--primary);"><i class="fa-solid fa-file-invoice"></i> ข้อมูลสมาชิกสามัญและสมทบ รายแห่ง ปีงบประมาณ 2569 (14 สถาบัน)</h3>
+        <div class="table-responsive">
+            <table id="tableMember69">
+                <thead>
+                    <tr>
+                        <th rowspan="2">ลำดับ</th><th rowspan="2">สถาบันเกษตรกร</th><th rowspan="2">ประเภท</th><th rowspan="2">ปีบัญชี</th>
+                        <th colspan="3" style="background:#e0f2fe;">ต.ค. 68</th><th colspan="3" style="background:#e0f2fe;">พ.ย. 68</th>
+                        <th colspan="3" style="background:#e0f2fe;">ธ.ค. 68</th><th colspan="3" style="background:#e0f2fe;">ม.ค. 69</th>
+                        <th colspan="3" style="background:#e0f2fe;">ก.พ. 69</th><th colspan="3" style="background:#e0f2fe;">มี.ค. 69</th>
+                        <th colspan="3" style="background:#e0f2fe;">เม.ย. 69</th><th colspan="3" style="background:#e0f2fe;">พ.ค. 69</th>
+                        <th colspan="3" style="background:#e0f2fe;">มิ.ย. 69</th><th colspan="3" style="background:#e0f2fe;">ก.ค. 69</th>
+                        <th colspan="3" style="background:#e0f2fe;">ส.ค. 69</th><th colspan="3" style="background:#e0f2fe;">ก.ย. 69</th>
+                    </tr>
+                    <tr>
+                        <th>สามัญ</th><th>สมทบ</th><th>รวม</th><th>สามัญ</th><th>สมทบ</th><th>รวม</th><th>สามัญ</th><th>สมทบ</th><th>รวม</th><th>สามัญ</th><th>สมทบ</th><th>รวม</th><th>สามัญ</th><th>สมทบ</th><th>รวม</th><th>สามัญ</th><th>สมทบ</th><th>รวม</th><th>สามัญ</th><th>สมทบ</th><th>รวม</th><th>สามัญ</th><th>สมทบ</th><th>รวม</th><th>สามัญ</th><th>สมทบ</th><th>รวม</th><th>สามัญ</th><th>สมทบ</th><th>รวม</th><th>สามัญ</th><th>สมทบ</th><th>รวม</th><th>สามัญ</th><th>สมทบ</th><th>รวม</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Tab 3: ข้อมูลสมาชิกสามัญและสมทบ (ปีงบ 70) -->
+    <div id="tab3" class="card tab-content">
+        <h3 style="margin-bottom: 15px; color: var(--primary);"><i class="fa-solid fa-file-invoice"></i> ข้อมูลสมาชิกสามัญและสมทบ รายแห่ง ปีงบประมาณ 2570 (14 สถาบัน)</h3>
+        <div class="table-responsive">
+            <table id="tableMember70">
+                <thead>
+                    <tr>
+                        <th rowspan="2">ลำดับ</th><th rowspan="2">สถาบันเกษตรกร</th><th rowspan="2">ประเภท</th><th rowspan="2">ปีบัญชี</th>
+                        <th colspan="3" style="background:#dcfce7;">ต.ค. 69</th><th colspan="3" style="background:#dcfce7;">พ.ย. 69</th>
+                        <th colspan="3" style="background:#dcfce7;">ธ.ค. 69</th><th colspan="3" style="background:#dcfce7;">ม.ค. 70</th>
+                        <th colspan="3" style="background:#dcfce7;">ก.พ. 70</th><th colspan="3" style="background:#dcfce7;">มี.ค. 70</th>
+                        <th colspan="3" style="background:#dcfce7;">เม.ย. 70</th><th colspan="3" style="background:#dcfce7;">พ.ค. 70</th>
+                        <th colspan="3" style="background:#dcfce7;">มิ.ย. 70</th><th colspan="3" style="background:#dcfce7;">ก.ค. 70</th>
+                        <th colspan="3" style="background:#dcfce7;">ส.ค. 70</th><th colspan="3" style="background:#dcfce7;">ก.ย. 70</th>
+                    </tr>
+                    <tr>
+                        <th>สามัญ</th><th>สมทบ</th><th>รวม</th><th>สามัญ</th><th>สมทบ</th><th>รวม</th><th>สามัญ</th><th>สมทบ</th><th>รวม</th><th>สามัญ</th><th>สมทบ</th><th>รวม</th><th>สามัญ</th><th>สมทบ</th><th>รวม</th><th>สามัญ</th><th>สมทบ</th><th>รวม</th><th>สามัญ</th><th>สมทบ</th><th>รวม</th><th>สามัญ</th><th>สมทบ</th><th>รวม</th><th>สามัญ</th><th>สมทบ</th><th>รวม</th><th>สามัญ</th><th>สมทบ</th><th>รวม</th><th>สามัญ</th><th>สมทบ</th><th>รวม</th><th>สามัญ</th><th>สมทบ</th><th>รวม</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Tab 4: ข้อมูลส่วนร่วมสามัญร้อยละ (%) ปีงบ 69 -->
+    <div id="tab4" class="card tab-content">
+        <h3 style="margin-bottom: 15px; color: var(--primary);"><i class="fa-solid fa-chart-pie"></i> ข้อมูลสมาชิก "สามัญ" ร่วมดำเนินธุรกิจร้อยละ (%) - ปีงบประมาณ 2569 (14 สถาบัน)</h3>
+        <div class="table-responsive">
+            <table id="tablePercent69">
+                <thead>
+                    <tr>
+                        <th>ที่</th><th>สถาบัน</th><th>ประเภท</th><th>ปีบัญชี</th><th>สามัญปัจจุบัน</th>
+                        <th>ต.ค.68</th><th>พ.ย.68</th><th>ธ.ค.68</th><th>ม.ค.69</th><th>ก.พ.69</th><th>มี.ค.69</th>
+                        <th>เม.ย.69</th><th>พ.ค.69</th><th>มิ.ย.69</th><th>ก.ค.69</th><th>ส.ค.69</th><th>ก.ย.69</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Tab 5: ข้อมูลส่วนร่วมสามัญร้อยละ (%) ปีงบ 70 -->
+    <div id="tab5" class="card tab-content">
+        <h3 style="margin-bottom: 15px; color: var(--primary);"><i class="fa-solid fa-chart-pie"></i> ข้อมูลสมาชิก "สามัญ" ร่วมดำเนินธุรกิจร้อยละ (%) - ปีงบประมาณ 2570 (14 สถาบัน)</h3>
+        <div class="table-responsive">
+            <table id="tablePercent70">
+                <thead>
+                    <tr>
+                        <th>ที่</th><th>สถาบัน</th><th>ประเภท</th><th>ปีบัญชี</th><th>สามัญปัจจุบัน</th>
+                        <th>ต.ค.69</th><th>พ.ย.69</th><th>ธ.ค.69</th><th>ม.ค.70</th><th>ก.พ.70</th><th>มี.ค.70</th>
+                        <th>เม.ย.70</th><th>พ.ค.70</th><th>มิ.ย.70</th><th>ก.ค.70</th><th>ส.ค.70</th><th>ก.ย.70</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    const monthsFy69 = ['ต.ค.68', 'พ.ย.68', 'ธ.ค.68', 'ม.ค.69', 'ก.พ.69', 'มี.ค.69', 'เม.ย.69', 'พ.ค.69', 'มิ.ย.69', 'ก.ค.69', 'ส.ค.69', 'ก.ย.69'];
+    const monthsFy70 = ['ต.ค.69', 'พ.ย.69', 'ธ.ค.69', 'ม.ค.70', 'ก.พ.70', 'มี.ค.70', 'เม.ย.70', 'พ.ค.70', 'มิ.ย.70', 'ก.ค.70', 'ส.ค.70', 'ก.ย.70'];
+
+    const institutions = [
+        {
+            id: 1, name: "สกก.รัตนบุรี จก.", type: "สก.", fiscalEnd: "มี.ค.", currentSamun69: 1619, currentSamun70: 1676,
+            samun69: [1676,1672,1670,1666,1666,1655,1640,1633,1628,1628,1626,1619],
+            somtob69: [292,294,294,294,294,296,294,294,293,293,292,288],
+            samun70: [1676,0,0,0,0,0,0,0,0,0,0,0],
+            somtob70: [292,0,0,0,0,0,0,0,0,0,0,0],
+            pct69: [99.11,99.34,97.72,97.96,97.96,98.61,100,100,100,100,100,100],
+            pct70: [100,0,0,0,0,0,0,0,0,0,0,0]
+        },
+        {
+            id: 2, name: "สกก.สนม จก.", type: "สก.", fiscalEnd: "มี.ค.", currentSamun69: 1176, currentSamun70: 1176,
+            samun69: [1190,1188,1186,1194,1194,1197,1192,1194,1191,1185,1182,1176],
+            somtob69: [925,925,923,923,923,923,923,923,922,925,925,922],
+            samun70: [0,0,0,0,0,0,0,0,0,0,0,0],
+            somtob70: [0,0,0,0,0,0,0,0,0,0,0,0],
+            pct69: [88.32,88.30,88.28,0,0,0,0,0,0,0,0,0],
+            pct70: [0,0,0,0,0,0,0,0,0,0,0,0]
+        },
+        {
+            id: 3, name: "สกก.ดอนแรด จก.", type: "สก.", fiscalEnd: "ม.ค.", currentSamun69: 59, currentSamun70: 58,
+            samun69: [62,62,62,62,62,62,62,59,59,59,59,59],
+            somtob69: [0,0,0,0,0,0,0,0,0,0,0,0],
+            samun70: [58,0,0,0,0,0,0,0,0,0,0,0],
+            somtob70: [0,0,0,0,0,0,0,0,0,0,0,0],
+            pct69: [88.71,88.71,88.71,88.71,88.71,88.71,88.71,88.14,88.14,88.14,88.14,88.14],
+            pct70: [87.93,0,0,0,0,0,0,0,0,0,0,0]
+        },
+        {
+            id: 4, name: "สก.โคเนื้อสุรินทร์วากิวยางสว่าง จก.", type: "สก.", fiscalEnd: "ก.ย.", currentSamun69: 111, currentSamun70: 111,
+            samun69: [111,111,111,111,111,111,111,111,111,111,111,111],
+            somtob69: [0,0,0,0,0,0,0,0,0,0,0,0],
+            samun70: [111,0,0,0,0,0,0,0,0,0,0,0],
+            somtob70: [0,0,0,0,0,0,0,0,0,0,0,0],
+            pct69: [100,100,100,100,100,100,100,100,100,100,100,100],
+            pct70: [100,0,0,0,0,0,0,0,0,0,0,0]
+        },
+        {
+            id: 5, name: "สก.โคนมรัตนบุรี จก.", type: "สก.", fiscalEnd: "ธ.ค.", currentSamun69: 64, currentSamun70: 64,
+            samun69: [65,65,64,64,64,64,64,64,64,64,64,64],
+            somtob69: [9,9,9,9,9,9,9,9,9,9,9,9],
+            samun70: [64,0,0,0,0,0,0,0,0,0,0,0],
+            somtob70: [9,0,0,0,0,0,0,0,0,0,0,0],
+            pct69: [64.62,64.62,65.63,71.88,71.88,71.88,71.88,71.88,71.88,71.88,71.88,70.31],
+            pct70: [70.31,0,0,0,0,0,0,0,0,0,0,0]
+        },
+        {
+            id: 6, name: "สค.โนนนารายณ์ จก.", type: "สก.", fiscalEnd: "ธ.ค.", currentSamun69: 601, currentSamun70: 601,
+            samun69: [610,610,601,601,601,601,601,601,601,601,601,601],
+            somtob69: [0,0,0,0,0,0,0,0,0,0,0,0],
+            samun70: [601,0,0,0,0,0,0,0,0,0,0,0],
+            somtob70: [0,0,0,0,0,0,0,0,0,0,0,0],
+            pct69: [56.89,56.89,47.42,47.42,47.42,47.42,47.42,47.42,47.42,47.42,47.42,47.42],
+            pct70: [47.42,0,0,0,0,0,0,0,0,0,0,0]
+        },
+        {
+            id: 7, name: "สบ.เดินรถรัตนบุรี จก.", type: "สก.", fiscalEnd: "ธ.ค.", currentSamun69: 14, currentSamun70: 14,
+            samun69: [14,14,14,14,14,14,14,14,14,14,14,14],
+            somtob69: [0,0,0,0,0,0,0,0,0,0,0,0],
+            samun70: [14,14,14,14,14,14,14,14,14,14,14,14],
+            somtob70: [0,0,0,0,0,0,0,0,0,0,0,0],
+            pct69: [92.86,92.86,92.86,92.86,92.86,92.86,92.86,92.86,92.86,92.86,92.86,92.86],
+            pct70: [92.86,92.86,92.86,92.86,92.86,92.86,92.86,92.86,92.86,92.86,92.86,92.86]
+        },
+        {
+            id: 8, name: "ก.ทำนาสนม", type: "ก.", fiscalEnd: "มี.ค.", currentSamun69: 39, currentSamun70: 39,
+            samun69: [41,41,41,41,41,38,38,38,38,38,38,39],
+            somtob69: [0,0,0,0,0,0,0,0,0,0,0,0],
+            samun70: [39,0,0,0,0,0,0,0,0,0,0,0],
+            somtob70: [0,0,0,0,0,0,0,0,0,0,0,0],
+            pct69: [26.83,26.83,26.83,26.83,26.83,28.95,28.95,28.95,28.95,28.95,55.26,53.85],
+            pct70: [53.85,0,0,0,0,0,0,0,0,0,0,0]
+        },
+        {
+            id: 9, name: "ก.ทำนาหนองอียอ", type: "ก.", fiscalEnd: "มี.ค.", currentSamun69: 33, currentSamun70: 33,
+            samun69: [43,43,43,43,43,43,43,40,40,33,33,33],
+            somtob69: [0,0,0,0,0,0,0,0,0,0,0,0],
+            samun70: [33,0,0,0,0,0,0,0,0,0,0,0],
+            somtob70: [0,0,0,0,0,0,0,0,0,0,0,0],
+            pct69: [90.70,90.70,90.70,90.70,90.70,90.70,90.70,90.00,90.00,100,100,100],
+            pct70: [100,0,0,0,0,0,0,0,0,0,0,0]
+        },
+        {
+            id: 10, name: "ก.เลี้ยงสัตว์สนม", type: "ก.", fiscalEnd: "มิ.ย.", currentSamun69: 42, currentSamun70: 42,
+            samun69: [43,43,43,43,42,42,42,42,42,42,42,42],
+            somtob69: [0,0,0,0,0,0,0,0,0,0,0,0],
+            samun70: [42,0,0,0,0,0,0,0,0,0,0,0],
+            somtob70: [0,0,0,0,0,0,0,0,0,0,0,0],
+            pct69: [95.35,95.35,95.35,97.67,100,100,100,100,100,100,100,100],
+            pct70: [100,0,0,0,0,0,0,0,0,0,0,0]
+        },
+        {
+            id: 11, name: "ก.ชาวสวนยางพาราต.หนองระฆัง", type: "ก.", fiscalEnd: "เม.ย.", currentSamun69: 69, currentSamun70: 69,
+            samun69: [70,69,69,69,69,69,69,69,67,67,69,69],
+            somtob69: [0,0,0,0,0,0,0,0,0,0,0,0],
+            samun70: [69,0,0,0,0,0,0,0,0,0,0,0],
+            somtob70: [0,0,0,0,0,0,0,0,0,0,0,0],
+            pct69: [71.43,75.36,75.36,78.26,78.26,78.26,78.26,71.01,73.13,73.13,71.01,71.01],
+            pct70: [71.01,0,0,0,0,0,0,0,0,0,0,0]
+        },
+        {
+            id: 12, name: "ก.ชาวสวนยางพาราบ้านนาดี", type: "ก.", fiscalEnd: "เม.ย.", currentSamun69: 77, currentSamun70: 77,
+            samun69: [111,109,109,109,109,109,109,109,109,109,109,77],
+            somtob69: [0,0,0,0,0,0,0,0,0,0,0,0],
+            samun70: [77,0,0,0,0,0,0,0,0,0,0,0],
+            somtob70: [0,0,0,0,0,0,0,0,0,0,0,0],
+            pct69: [41.44,64.22,64.22,64.22,64.22,64.22,64.22,31.19,48.62,48.62,48.62,68.83],
+            pct70: [68.83,0,0,0,0,0,0,0,0,0,0,0]
+        },
+        {
+            id: 13, name: "ก.ทำสวนยางพาราต.เบิด", type: "ก.", fiscalEnd: "เม.ย.", currentSamun69: 114, currentSamun70: 114,
+            samun69: [112,112,112,114,114,114,114,114,114,114,114,114],
+            somtob69: [0,0,0,0,0,0,0,0,0,0,0,0],
+            samun70: [0,0,0,0,0,0,0,0,0,0,0,0],
+            somtob70: [0,0,0,0,0,0,0,0,0,0,0,0],
+            pct69: [89.29,89.29,75.89,0,0,0,0,0,0,0,0,0],
+            pct70: [0,0,0,0,0,0,0,0,0,0,0,0]
+        },
+        {
+            id: 14, name: "ก.ทำสวนยางพาราต.คำผง", type: "ก.", fiscalEnd: "เม.ย.", currentSamun69: 154, currentSamun70: 155,
+            samun69: [150,150,150,150,150,150,150,150,150,151,154,154],
+            somtob69: [0,0,0,0,0,0,0,0,0,0,0,0],
+            samun70: [155,0,0,0,0,0,0,0,0,0,0,0],
+            somtob70: [0,0,0,0,0,0,0,0,0,0,0,0],
+            pct69: [76.67,75.33,78.67,71.33,0,0,0,0,0,0,0,0],
+            pct70: [0,0,0,0,0,0,0,0,0,0,0,0]
+        }
+    ];
+
+    function buildTables() {
+        const tbodyM69 = document.querySelector('#tableMember69 tbody');
+        const tbodyM70 = document.querySelector('#tableMember70 tbody');
+        const tbodyP69 = document.querySelector('#tablePercent69 tbody');
+        const tbodyP70 = document.querySelector('#tablePercent70 tbody');
+
+        institutions.forEach((inst) => {
+            const badgeClass = inst.type === 'สก.' ? 'badge-sk' : 'badge-group';
+
+            let cells69 = '';
+            for (let m = 0; m < 12; m++) {
+                const s = inst.samun69[m], t = inst.somtob69[m], tot = s + t;
+                cells69 += tot > 0
+                    ? `<td>${s.toLocaleString()}</td><td>${t.toLocaleString()}</td><td><strong>${tot.toLocaleString()}</strong></td>`
+                    : `<td>-</td><td>-</td><td>-</td>`;
+            }
+            tbodyM69.innerHTML += `<tr><td>${inst.id}</td><td><strong>${inst.name}</strong></td><td><span class="badge ${badgeClass}">${inst.type}</span></td><td>${inst.fiscalEnd}</td>${cells69}</tr>`;
+
+            let cells70 = '';
+            for (let m = 0; m < 12; m++) {
+                const s = inst.samun70[m], t = inst.somtob70[m], tot = s + t;
+                cells70 += tot > 0
+                    ? `<td>${s.toLocaleString()}</td><td>${t.toLocaleString()}</td><td><strong>${tot.toLocaleString()}</strong></td>`
+                    : `<td>-</td><td>-</td><td>-</td>`;
+            }
+            tbodyM70.innerHTML += `<tr><td>${inst.id}</td><td><strong>${inst.name}</strong></td><td><span class="badge ${badgeClass}">${inst.type}</span></td><td>${inst.fiscalEnd}</td>${cells70}</tr>`;
+
+            let pctCells69 = '';
+            for (let m = 0; m < 12; m++) {
+                const val = inst.pct69[m];
+                pctCells69 += val > 0 ? `<td>${val.toFixed(2)}%</td>` : `<td>-</td>`;
+            }
+            tbodyP69.innerHTML += `<tr><td>${inst.id}</td><td><strong>${inst.name}</strong></td><td><span class="badge ${badgeClass}">${inst.type}</span></td><td>${inst.fiscalEnd}</td><td>${inst.currentSamun69.toLocaleString()}</td>${pctCells69}</tr>`;
+
+            let pctCells70 = '';
+            for (let m = 0; m < 12; m++) {
+                const val = inst.pct70[m];
+                pctCells70 += val > 0 ? `<td>${val.toFixed(2)}%</td>` : `<td>-</td>`;
+            }
+            tbodyP70.innerHTML += `<tr><td>${inst.id}</td><td><strong>${inst.name}</strong></td><td><span class="badge ${badgeClass}">${inst.type}</span></td><td>${inst.fiscalEnd}</td><td>${inst.currentSamun70.toLocaleString()}</td>${pctCells70}</tr>`;
+        });
+    }
+
+    function populateSelects() {
+        const selectIds = [
+            'pieSelect', 'institutionSelect69', 'institutionSelect70',
+            'pctPieSelect', 'percentSelect69', 'percentSelect70'
+        ];
+        selectIds.forEach(id => {
+            const el = document.getElementById(id);
+            el.innerHTML = institutions.map((inst, idx) => `<option value="${idx}">${inst.id}. ${inst.name}</option>`).join('');
+        });
+    }
+
+    function switchTab(tabId, event) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+        filterTables();
+    }
+
+    function filterTables() {
+        const filter = document.getElementById("searchInput").value.toLowerCase();
+        const activeTab = document.querySelector('.tab-content.active');
+        if (!activeTab) return;
+        const tables = activeTab.getElementsByTagName("table");
+        if (tables.length === 0) return;
+        const trs = tables[0].getElementsByTagName("tr");
+        for (let i = 1; i < trs.length; i++) {
+            const td = trs[i].getElementsByTagName("td")[1];
+            if (td) {
+                const txt = td.textContent || td.innerText;
+                trs[i].style.display = txt.toLowerCase().indexOf(filter) > -1 ? "" : "none";
+            }
+        }
+    }
+
+    const piePercentLabelPlugin = {
+        id: 'piePercentLabelPlugin',
+        afterDatasetsDraw(chart) {
+            if (chart.config.type !== 'pie') return;
+            const { ctx, data } = chart;
+            const dataset = data.datasets[0];
+            if (!dataset) return;
+            const values = dataset.data.map(v => Number(v) || 0);
+            const total = values.reduce((acc, v) => acc + v, 0);
+            if (total <= 0) return;
+
+            const meta = chart.getDatasetMeta(0);
+            const customLabels = chart.config.options.plugins?.piePercentLabels?.customLabels;
+            const textColors = chart.config.options.plugins?.piePercentLabels?.textColors || [];
+
+            ctx.save();
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            meta.data.forEach((arc, idx) => {
+                const val = values[idx];
+                if (val <= 0) return;
+                const pctStr = ((val / total) * 100).toFixed(2) + '%';
+                const pos = arc.tooltipPosition();
+                const color = textColors[idx] || '#ffffff';
+
+                ctx.fillStyle = color;
+                ctx.font = 'bold 14px Sarabun, sans-serif';
+                ctx.fillText(pctStr, pos.x, pos.y - (customLabels ? 9 : 0));
+
+                if (customLabels && customLabels[idx]) {
+                    ctx.font = '600 12px Sarabun, sans-serif';
+                    ctx.fillText(customLabels[idx], pos.x, pos.y + 10);
+                }
+            });
+            ctx.restore();
+        }
+    };
+
+    const dataValueLabelPlugin = {
+        id: 'dataValueLabelPlugin',
+        afterDatasetsDraw(chart) {
+            if (chart.config.type === 'pie') return;
+            const { ctx } = chart;
+            const labelOpts = chart.config.options.plugins?.dataLabels || {};
+            if (labelOpts.enabled === false) return;
+
+            const suffix = labelOpts.suffix || '';
+            const decimals = typeof labelOpts.decimals === 'number' ? labelOpts.decimals : 0;
+            const skipZero = labelOpts.skipZero !== false;
+            const isHorizontal = chart.config.options.indexAxis === 'y';
+
+            ctx.save();
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            ctx.font = 'bold 11px Sarabun, sans-serif';
+
+            chart.data.datasets.forEach((dataset, dsIndex) => {
+                if (dataset.showValueLabel === false) return;
+                const meta = chart.getDatasetMeta(dsIndex);
+                if (!meta || meta.hidden) return;
+
+                const isStackedBar = chart.config.type === 'bar' && (
+                    isHorizontal ? chart.config.options.scales?.x?.stacked : chart.config.options.scales?.y?.stacked
+                );
+
+                meta.data.forEach((element, idx) => {
+                    const rawVal = dataset.data[idx];
+                    const numVal = Number(rawVal);
+                    if (rawVal === null || rawVal === undefined || Number.isNaN(numVal)) return;
+                    if (skipZero && numVal <= 0) return;
+
+                    let formatted = decimals > 0 ? numVal.toFixed(decimals) : Math.round(numVal).toLocaleString();
+                    formatted += suffix;
+
+                    let xPos = element.x;
+                    let yPos = element.y - 5;
+                    let color = dataset.labelColor || '#1e293b';
+
+                    if (isStackedBar) {
+                        if (isHorizontal) {
+                            const rightX = element.x;
+                            const baseX = element.base;
+                            const widthPx = Math.abs(rightX - baseX);
+                            if (widthPx < 24) return;
+                            xPos = (rightX + baseX) / 2;
+                            yPos = element.y;
+                            ctx.textBaseline = 'middle';
+                            color = dataset.stackLabelColor || '#1e293b';
+                        } else {
+                            const topY = element.y;
+                            const baseY = element.base;
+                            const heightPx = Math.abs(baseY - topY);
+                            if (heightPx < 16) return;
+                            yPos = (topY + baseY) / 2;
+                            ctx.textBaseline = 'middle';
+                            color = dataset.stackLabelColor || '#1e293b';
+                        }
+                    } else if (chart.config.type === 'line') {
+                        yPos = element.y - 8;
+                        ctx.textBaseline = 'bottom';
+                    } else if (isHorizontal && chart.config.type === 'bar') {
+                        xPos = element.x + 6;
+                        yPos = element.y;
+                        ctx.textAlign = 'left';
+                        ctx.textBaseline = 'middle';
+                    }
+
+                    ctx.fillStyle = color;
+                    ctx.fillText(formatted, xPos, yPos);
+                    ctx.textAlign = 'center';
+                });
+            });
+            ctx.restore();
+        }
+    };
+
+    Chart.register(piePercentLabelPlugin, dataValueLabelPlugin);
+
+    let pieChart = null;
+    let instChart69 = null;
+    let instChart70 = null;
+    let pctPieChart = null;
+    let percentChart69 = null;
+    let percentChart70 = null;
+
+    // ดึงข้อมูลจำนวนสมาชิกสามัญและสมทบล่าสุดที่มีข้อมูลจริงในชุดข้อมูล (ไล่จากปีงบ 70 ล่าสุดย้อนไปปีงบ 69)
+    function getLatestReportedMember(inst) {
+        for (let i = 11; i >= 0; i--) {
+            if (inst.samun70[i] > 0 || inst.somtob70[i] > 0) {
+                return { samun: inst.samun70[i], somtob: inst.somtob70[i], month: monthsFy70[i] };
+            }
+        }
+        for (let i = 11; i >= 0; i--) {
+            if (inst.samun69[i] > 0 || inst.somtob69[i] > 0) {
+                return { samun: inst.samun69[i], somtob: inst.somtob69[i], month: monthsFy69[i] };
+            }
+        }
+        return { samun: 0, somtob: 0, month: "-" };
+    }
+
+    // ดึงข้อมูลร้อยละส่วนร่วมสมาชิกสามัญล่าสุดที่มีข้อมูลจริงในชุดข้อมูล (ไล่จากปีงบ 70 ล่าสุดย้อนไปปีงบ 69)
+    function getLatestReportedPercent(inst) {
+        for (let i = 11; i >= 0; i--) {
+            if (inst.pct70[i] > 0) {
+                return { participatePct: parseFloat(inst.pct70[i].toFixed(2)), month: monthsFy70[i] };
+            }
+        }
+        for (let i = 11; i >= 0; i--) {
+            if (inst.pct69[i] > 0) {
+                return { participatePct: parseFloat(inst.pct69[i].toFixed(2)), month: monthsFy69[i] };
+            }
+        }
+        return { participatePct: 0, month: "-" };
+    }
+
+    function updatePieChart() {
+        const idx = parseInt(document.getElementById('pieSelect').value);
+        const inst = institutions[idx];
+        const latest = getLatestReportedMember(inst);
+        const total = latest.samun + latest.somtob;
+
+        document.getElementById('pieLatestMeta').innerHTML =
+            `<i class="fa-regular fa-calendar-check"></i> เดือนที่รายงานล่าสุด: <strong>${latest.month}</strong> | รวมทั้งหมด: <strong>${total.toLocaleString()}</strong> คน`;
+
+        const ctxPie = document.getElementById('pieChart').getContext('2d');
+        if (pieChart) pieChart.destroy();
+
+        const gradTealIndigo = ctxPie.createLinearGradient(0, 0, 0, 420);
+        gradTealIndigo.addColorStop(0, '#0284c7');
+        gradTealIndigo.addColorStop(1, '#0369a1');
+
+        const gradPink = ctxPie.createLinearGradient(0, 0, 0, 420);
+        gradPink.addColorStop(0, '#f472b6');
+        gradPink.addColorStop(1, '#ec4899');
+
+        pieChart = new Chart(ctxPie, {
+            type: 'pie',
+            data: {
+                labels: ['สมาชิกสามัญ (คน)', 'สมาชิกสมทบ (คน)'],
+                datasets: [{
+                    data: [latest.samun, latest.somtob],
+                    backgroundColor: [gradTealIndigo, gradPink],
+                    borderColor: '#ffffff',
+                    borderWidth: 2,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: `สัดส่วนสมาชิกสามัญและสมทบของ: ${inst.name} (ข้อมูลล่าสุด ${latest.month})`,
+                        color: '#334155',
+                        font: { size: 15, family: 'Sarabun', weight: 'bold' }
+                    },
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#334155', font: { size: 14, family: 'Sarabun' }, padding: 18 }
+                    },
+                    piePercentLabels: {
+                        customLabels: [`${latest.samun.toLocaleString()} คน`, `${latest.somtob.toLocaleString()} คน`],
+                        textColors: ['#ffffff', '#ffffff']
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => {
+                                const val = ctx.parsed || 0;
+                                const pct = total > 0 ? ((val / total) * 100).toFixed(2) : '0.00';
+                                return ` ${ctx.label}: ${val.toLocaleString()} คน (${pct}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function updateInstitutionChart69() {
+        const idx = parseInt(document.getElementById('institutionSelect69').value);
+        const data = institutions[idx];
+        const totalTrend = data.samun69.map((val, i) => val + data.somtob69[i]);
+
+        const ctxInst = document.getElementById('institutionChart69').getContext('2d');
+        if (instChart69) instChart69.destroy();
+
+        const gradGray = ctxInst.createLinearGradient(0, 0, 0, 420);
+        gradGray.addColorStop(0, '#94a3b8');
+        gradGray.addColorStop(1, '#64748b');
+
+        const gradOrangeLight = ctxInst.createLinearGradient(0, 0, 0, 420);
+        gradOrangeLight.addColorStop(0, '#fed7aa');
+        gradOrangeLight.addColorStop(1, '#fdba74');
+
+        instChart69 = new Chart(ctxInst, {
+            type: 'bar',
+            data: {
+                labels: monthsFy69,
+                datasets: [
+                    {
+                        type: 'bar', label: 'สมาชิกสามัญ (คน)', data: data.samun69,
+                        backgroundColor: gradGray, borderColor: '#475569', borderWidth: 1,
+                        order: 2, stackLabelColor: '#ffffff', borderRadius: 4
+                    },
+                    {
+                        type: 'bar', label: 'สมาชิกสมทบ (คน)', data: data.somtob69,
+                        backgroundColor: gradOrangeLight, borderColor: '#f97316', borderWidth: 1,
+                        order: 2, stackLabelColor: '#7c2d12', borderRadius: 4
+                    },
+                    {
+                        type: 'line', label: 'แนวโน้มรวม (คน)', data: totalTrend,
+                        borderColor: '#1e3a8a', backgroundColor: 'transparent', borderWidth: 3,
+                        pointRadius: 4, pointBackgroundColor: '#1e3a8a', pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2, tension: 0.3, order: 1, labelColor: '#1e3a8a'
+                    }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    title: { display: true, text: 'Trend ปีงบ 69: ' + data.name, font: { size: 15, family: 'Sarabun', weight: 'bold' } },
+                    tooltip: { mode: 'index', intersect: false },
+                    dataLabels: { enabled: true, decimals: 0, suffix: '' }
+                },
+                scales: {
+                    x: { stacked: true, grid: { display: false } },
+                    y: { stacked: true, beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } }
+                }
+            }
+        });
+    }
+
+    function updateInstitutionChart70() {
+        const idx = parseInt(document.getElementById('institutionSelect70').value);
+        const data = institutions[idx];
+        const totalTrend = data.samun70.map((val, i) => val + data.somtob70[i]);
+
+        const ctxInst = document.getElementById('institutionChart70').getContext('2d');
+        if (instChart70) instChart70.destroy();
+
+        const gradBetelRed = ctxInst.createLinearGradient(0, 0, 0, 420);
+        gradBetelRed.addColorStop(0, '#fb7185');
+        gradBetelRed.addColorStop(1, '#e11d48');
+
+        const gradSoftYellow = ctxInst.createLinearGradient(0, 0, 0, 420);
+        gradSoftYellow.addColorStop(0, '#fef08a');
+        gradSoftYellow.addColorStop(1, '#fde047');
+
+        instChart70 = new Chart(ctxInst, {
+            type: 'bar',
+            data: {
+                labels: monthsFy70,
+                datasets: [
+                    {
+                        type: 'bar', label: 'สมาชิกสามัญ (คน)', data: data.samun70,
+                        backgroundColor: gradBetelRed, borderColor: '#be123c', borderWidth: 1,
+                        order: 2, stackLabelColor: '#ffffff', borderRadius: 4
+                    },
+                    {
+                        type: 'bar', label: 'สมาชิกสมทบ (คน)', data: data.somtob70,
+                        backgroundColor: gradSoftYellow, borderColor: '#eab308', borderWidth: 1,
+                        order: 2, stackLabelColor: '#713f12', borderRadius: 4
+                    },
+                    {
+                        type: 'line', label: 'แนวโน้มรวม (คน)', data: totalTrend,
+                        borderColor: '#1e3a8a', backgroundColor: 'transparent', borderWidth: 3,
+                        pointRadius: 4, pointBackgroundColor: '#1e3a8a', pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2, tension: 0.3, order: 1, labelColor: '#1e3a8a'
+                    }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    title: { display: true, text: 'Trend ปีงบ 70: ' + data.name, font: { size: 15, family: 'Sarabun', weight: 'bold' } },
+                    tooltip: { mode: 'index', intersect: false },
+                    dataLabels: { enabled: true, decimals: 0, suffix: '' }
+                },
+                scales: {
+                    x: { stacked: true, grid: { display: false } },
+                    y: { stacked: true, beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } }
+                }
+            }
+        });
+    }
+
+    function updatePctPieChart() {
+        const idx = parseInt(document.getElementById('pctPieSelect').value);
+        const inst = institutions[idx];
+        const latest = getLatestReportedPercent(inst);
+        const remainPct = parseFloat(Math.max(0, 100 - latest.participatePct).toFixed(2));
+
+        document.getElementById('pctPieLatestMeta').innerHTML =
+            `<i class="fa-regular fa-calendar-check"></i> เดือนที่รายงานล่าสุด: <strong>${latest.month}</strong> | ร่วมดำเนินธุรกิจ: <strong>${latest.participatePct.toFixed(2)}%</strong>`;
+
+        const ctxPctPie = document.getElementById('pctPieChart').getContext('2d');
+        if (pctPieChart) pctPieChart.destroy();
+
+        const gradBrown = ctxPctPie.createLinearGradient(0, 0, 0, 420);
+        gradBrown.addColorStop(0, '#b45309');
+        gradBrown.addColorStop(1, '#78350f');
+
+        const gradYellowLight = ctxPctPie.createLinearGradient(0, 0, 0, 420);
+        gradYellowLight.addColorStop(0, '#fef08a');
+        gradYellowLight.addColorStop(1, '#fde047');
+
+        pctPieChart = new Chart(ctxPctPie, {
+            type: 'pie',
+            data: {
+                labels: ['ร่วมดำเนินธุรกิจ (%)', 'ส่วนที่เหลือ (%)'],
+                datasets: [{
+                    data: [latest.participatePct, remainPct],
+                    backgroundColor: [gradBrown, gradYellowLight],
+                    borderColor: '#ffffff',
+                    borderWidth: 2,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: `สัดส่วนร่วมดำเนินธุรกิจสมาชิกสามัญของ: ${inst.name} (ข้อมูลล่าสุด ${latest.month})`,
+                        color: '#334155',
+                        font: { size: 15, family: 'Sarabun', weight: 'bold' }
+                    },
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#334155', font: { size: 14, family: 'Sarabun' }, padding: 18 }
+                    },
+                    piePercentLabels: { textColors: ['#ffffff', '#78350f'] },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => ` ${ctx.label}: ${Number(ctx.parsed || 0).toFixed(2)}%`
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function updatePercentChart69() {
+        const idx = parseInt(document.getElementById('percentSelect69').value);
+        const data = institutions[idx];
+
+        const ctxPct = document.getElementById('percentChart69').getContext('2d');
+        if (percentChart69) percentChart69.destroy();
+
+        const gradient = ctxPct.createLinearGradient(0, 0, 0, 420);
+        gradient.addColorStop(0, 'rgba(168, 85, 247, 0.4)');
+        gradient.addColorStop(1, 'rgba(168, 85, 247, 0.02)');
+
+        percentChart69 = new Chart(ctxPct, {
+            type: 'line',
+            data: {
+                labels: monthsFy69,
+                datasets: [{
+                    label: 'ร้อยละ (%) การร่วมดำเนินธุรกิจ',
+                    data: data.pct69,
+                    borderColor: '#a855f7',
+                    backgroundColor: gradient,
+                    fill: true, tension: 0.35, borderWidth: 3,
+                    pointRadius: 5, pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#a855f7', pointBorderWidth: 2,
+                    labelColor: '#6b21a8'
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    title: { display: true, text: 'Trend ปีงบ 69: ' + data.name, font: { size: 15, family: 'Sarabun', weight: 'bold' } },
+                    tooltip: { callbacks: { label: c => c.parsed.y > 0 ? c.parsed.y.toFixed(2) + '%' : 'ไม่มีข้อมูล' } },
+                    dataLabels: { enabled: true, decimals: 2, suffix: '%' }
+                },
+                scales: {
+                    y: { beginAtZero: true, max: 108, ticks: { callback: v => v <= 100 ? v + '%' : '' }, grid: { color: 'rgba(0,0,0,0.05)' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    }
+
+    function updatePercentChart70() {
+        const idx = parseInt(document.getElementById('percentSelect70').value);
+        const data = institutions[idx];
+
+        const ctxPct = document.getElementById('percentChart70').getContext('2d');
+        if (percentChart70) percentChart70.destroy();
+
+        const gradient = ctxPct.createLinearGradient(0, 0, 0, 420);
+        gradient.addColorStop(0, 'rgba(236, 72, 153, 0.4)');
+        gradient.addColorStop(1, 'rgba(236, 72, 153, 0.02)');
+
+        percentChart70 = new Chart(ctxPct, {
+            type: 'line',
+            data: {
+                labels: monthsFy70,
+                datasets: [{
+                    label: 'ร้อยละ (%) การร่วมดำเนินธุรกิจ',
+                    data: data.pct70,
+                    borderColor: '#ec4899',
+                    backgroundColor: gradient,
+                    fill: true, tension: 0.35, borderWidth: 3,
+                    pointRadius: 5, pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#ec4899', pointBorderWidth: 2,
+                    labelColor: '#9d174d'
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    title: { display: true, text: 'Trend ปีงบ 70: ' + data.name, font: { size: 15, family: 'Sarabun', weight: 'bold' } },
+                    tooltip: { callbacks: { label: c => c.parsed.y > 0 ? c.parsed.y.toFixed(2) + '%' : 'ไม่มีข้อมูล' } },
+                    dataLabels: { enabled: true, decimals: 2, suffix: '%' }
+                },
+                scales: {
+                    y: { beginAtZero: true, max: 108, ticks: { callback: v => v <= 100 ? v + '%' : '' }, grid: { color: 'rgba(0,0,0,0.05)' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    }
+
+    function initStaticCharts() {
+        // 1) จำนวนสมาชิกภาพรวมสหกรณ์รายแห่งสูงสุด (เดือนที่รายงานล่าสุด)
+        const coopMemberList = institutions
+            .filter(inst => inst.type === 'สก.')
+            .map(inst => {
+                const latest = getLatestReportedMember(inst);
+                return {
+                    name: inst.name,
+                    samun: latest.samun,
+                    somtob: latest.somtob,
+                    total: latest.samun + latest.somtob,
+                    month: latest.month
+                };
+            })
+            .sort((a, b) => b.total - a.total);
+
+        const ctxCoopRank = document.getElementById('coopRankChart').getContext('2d');
+        const gradTurquoise = ctxCoopRank.createLinearGradient(0, 0, 500, 0);
+        gradTurquoise.addColorStop(0, '#0d9488');
+        gradTurquoise.addColorStop(1, '#2dd4bf');
+
+        const gradOrose = ctxCoopRank.createLinearGradient(0, 0, 500, 0);
+        gradOrose.addColorStop(0, '#fb7185');
+        gradOrose.addColorStop(1, '#fda4af');
+
+        new Chart(ctxCoopRank, {
+            type: 'bar',
+            data: {
+                labels: coopMemberList.map(d => d.name),
+                datasets: [
+                    {
+                        label: 'สมาชิกสามัญ (คน)',
+                        data: coopMemberList.map(d => d.samun),
+                        backgroundColor: gradTurquoise,
+                        borderColor: '#0f766e',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        stackLabelColor: '#ffffff'
+                    },
+                    {
+                        label: 'สมาชิกสมทบ (คน)',
+                        data: coopMemberList.map(d => d.somtob),
+                        backgroundColor: gradOrose,
+                        borderColor: '#f43f5e',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        stackLabelColor: '#881337'
+                    }
+                ]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            afterBody: items => {
+                                const item = coopMemberList[items[0].dataIndex];
+                                return `รวมทั้งหมด: ${item.total.toLocaleString()} คน (เดือนล่าสุด: ${item.month})`;
+                            }
+                        }
+                    },
+                    dataLabels: { enabled: true, decimals: 0, suffix: '' }
+                },
+                scales: {
+                    x: { stacked: true, beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                    y: { stacked: true, grid: { display: false } }
+                }
+            }
+        });
+
+        // 2) จำนวนสมาชิกภาพรวมกลุ่มเกษตรกรรายแห่งสูงสุด (เดือนที่รายงานล่าสุด)
+        const groupMemberList = institutions
+            .filter(inst => inst.type === 'ก.')
+            .map(inst => {
+                const latest = getLatestReportedMember(inst);
+                return {
+                    name: inst.name,
+                    samun: latest.samun,
+                    somtob: latest.somtob,
+                    total: latest.samun + latest.somtob,
+                    month: latest.month
+                };
+            })
+            .sort((a, b) => b.total - a.total);
+
+        const ctxGroupRank = document.getElementById('groupRankChart').getContext('2d');
+        const gradTealBlue = ctxGroupRank.createLinearGradient(0, 0, 500, 0);
+        gradTealBlue.addColorStop(0, '#0369a1');
+        gradTealBlue.addColorStop(1, '#0ea5e9');
+
+        const gradLightYellow = ctxGroupRank.createLinearGradient(0, 0, 500, 0);
+        gradLightYellow.addColorStop(0, '#fde047');
+        gradLightYellow.addColorStop(1, '#fef08a');
+
+        new Chart(ctxGroupRank, {
+            type: 'bar',
+            data: {
+                labels: groupMemberList.map(d => d.name),
+                datasets: [
+                    {
+                        label: 'สมาชิกสามัญ (คน)',
+                        data: groupMemberList.map(d => d.samun),
+                        backgroundColor: gradTealBlue,
+                        borderColor: '#075985',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        stackLabelColor: '#ffffff'
+                    },
+                    {
+                        label: 'สมาชิกสมทบ (คน)',
+                        data: groupMemberList.map(d => d.somtob),
+                        backgroundColor: gradLightYellow,
+                        borderColor: '#eab308',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        stackLabelColor: '#713f12'
+                    }
+                ]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            afterBody: items => {
+                                const item = groupMemberList[items[0].dataIndex];
+                                return `รวมทั้งหมด: ${item.total.toLocaleString()} คน (เดือนล่าสุด: ${item.month})`;
+                            }
+                        }
+                    },
+                    dataLabels: { enabled: true, decimals: 0, suffix: '' }
+                },
+                scales: {
+                    x: { stacked: true, beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                    y: { stacked: true, grid: { display: false } }
+                }
+            }
+        });
+
+        // 7) ส่วนร่วมสามัญของสหกรณ์ ร้อยละ (%) รายแห่งสูงสุด (เดือนที่รายงานล่าสุด)
+        const coopPctList = institutions
+            .filter(inst => inst.type === 'สก.')
+            .map(inst => {
+                const latest = getLatestReportedPercent(inst);
+                const remain = parseFloat(Math.max(0, 100 - latest.participatePct).toFixed(2));
+                return {
+                    name: inst.name,
+                    participatePct: latest.participatePct,
+                    remainPct: remain,
+                    month: latest.month
+                };
+            })
+            .sort((a, b) => b.participatePct - a.participatePct);
+
+        const ctxCoopPct = document.getElementById('coopPctRankChart').getContext('2d');
+        const gradBetelRedPct = ctxCoopPct.createLinearGradient(0, 0, 500, 0);
+        gradBetelRedPct.addColorStop(0, '#be123c');
+        gradBetelRedPct.addColorStop(1, '#fb7185');
+
+        const gradLightGreen = ctxCoopPct.createLinearGradient(0, 0, 500, 0);
+        gradLightGreen.addColorStop(0, '#4ade80');
+        gradLightGreen.addColorStop(1, '#bbf7d0');
+
+        new Chart(ctxCoopPct, {
+            type: 'bar',
+            data: {
+                labels: coopPctList.map(d => d.name),
+                datasets: [
+                    {
+                        label: 'ร่วมดำเนินธุรกิจ (%)',
+                        data: coopPctList.map(d => d.participatePct),
+                        backgroundColor: gradBetelRedPct,
+                        borderColor: '#9f1239',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        stackLabelColor: '#ffffff'
+                    },
+                    {
+                        label: 'ส่วนที่เหลือ (%)',
+                        data: coopPctList.map(d => d.remainPct),
+                        backgroundColor: gradLightGreen,
+                        borderColor: '#22c55e',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        stackLabelColor: '#14532d'
+                    }
+                ]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            afterBody: items => `เดือนที่รายงานล่าสุด: ${coopPctList[items[0].dataIndex].month}`
+                        }
+                    },
+                    dataLabels: { enabled: true, decimals: 2, suffix: '%' }
+                },
+                scales: {
+                    x: { stacked: true, beginAtZero: true, max: 100, ticks: { callback: v => v + '%' }, grid: { color: 'rgba(0,0,0,0.05)' } },
+                    y: { stacked: true, grid: { display: false } }
+                }
+            }
+        });
+
+        // 8) ส่วนร่วมสามัญของกลุ่มเกษตรกร ร้อยละ (%) รายแห่งสูงสุด (เดือนที่รายงานล่าสุด)
+        const groupPctList = institutions
+            .filter(inst => inst.type === 'ก.')
+            .map(inst => {
+                const latest = getLatestReportedPercent(inst);
+                const remain = parseFloat(Math.max(0, 100 - latest.participatePct).toFixed(2));
+                return {
+                    name: inst.name,
+                    participatePct: latest.participatePct,
+                    remainPct: remain,
+                    month: latest.month
+                };
+            })
+            .sort((a, b) => b.participatePct - a.participatePct);
+
+        const ctxGroupPct = document.getElementById('groupPctRankChart').getContext('2d');
+        const gradGrayPct = ctxGroupPct.createLinearGradient(0, 0, 500, 0);
+        gradGrayPct.addColorStop(0, '#64748b');
+        gradGrayPct.addColorStop(1, '#94a3b8');
+
+        const gradLightBlue = ctxGroupPct.createLinearGradient(0, 0, 500, 0);
+        gradLightBlue.addColorStop(0, '#7dd3fc');
+        gradLightBlue.addColorStop(1, '#bae6fd');
+
+        new Chart(ctxGroupPct, {
+            type: 'bar',
+            data: {
+                labels: groupPctList.map(d => d.name),
+                datasets: [
+                    {
+                        label: 'ร่วมดำเนินธุรกิจ (%)',
+                        data: groupPctList.map(d => d.participatePct),
+                        backgroundColor: gradGrayPct,
+                        borderColor: '#475569',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        stackLabelColor: '#ffffff'
+                    },
+                    {
+                        label: 'ส่วนที่เหลือ (%)',
+                        data: groupPctList.map(d => d.remainPct),
+                        backgroundColor: gradLightBlue,
+                        borderColor: '#38bdf8',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        stackLabelColor: '#0c4a6e'
+                    }
+                ]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            afterBody: items => `เดือนที่รายงานล่าสุด: ${groupPctList[items[0].dataIndex].month}`
+                        }
+                    },
+                    dataLabels: { enabled: true, decimals: 2, suffix: '%' }
+                },
+                scales: {
+                    x: { stacked: true, beginAtZero: true, max: 100, ticks: { callback: v => v + '%' }, grid: { color: 'rgba(0,0,0,0.05)' } },
+                    y: { stacked: true, grid: { display: false } }
+                }
+            }
+        });
+
+        // 5) Trend จำนวนสมาชิกภาพรวม (สามัญและสมทบ) รายเดือน ปีงบ 69 (14 สถาบัน) + เส้น Trend
+        const ctxBar69 = document.getElementById('barChart69').getContext('2d');
+        const gradBar69 = ctxBar69.createLinearGradient(0, 0, 0, 420);
+        gradBar69.addColorStop(0, 'rgba(59, 130, 246, 0.9)');
+        gradBar69.addColorStop(1, 'rgba(37, 99, 235, 0.6)');
+
+        const totals69 = monthsFy69.map((_, m) =>
+            institutions.reduce((sum, inst) => sum + inst.samun69[m] + inst.somtob69[m], 0)
+        );
+
+        new Chart(ctxBar69, {
+            type: 'bar',
+            data: {
+                labels: monthsFy69,
+                datasets: [
+                    {
+                        type: 'bar',
+                        label: 'ยอดรวมสมาชิก ปีงบ 69 (คน)',
+                        data: totals69,
+                        backgroundColor: gradBar69,
+                        borderColor: '#1d4ed8',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        labelColor: '#1e3a8a',
+                        order: 2
+                    },
+                    {
+                        type: 'line',
+                        label: 'เส้น Trend ยอดรวมสมาชิก ปีงบ 69',
+                        data: totals69,
+                        borderColor: '#1e3a8a',
+                        backgroundColor: 'transparent',
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#1e3a8a',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        tension: 0.3,
+                        labelColor: '#1e3a8a',
+                        showValueLabel: false,
+                        order: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    tooltip: { mode: 'index', intersect: false },
+                    dataLabels: { enabled: true, decimals: 0, suffix: '' }
+                },
+                scales: { y: { beginAtZero: false, min: 5000, suggestedMax: 6300 } }
+            }
+        });
+
+        // 6) Trend จำนวนสมาชิกภาพรวม (สามัญและสมทบ) รายเดือน ปีงบ 70 (14 สถาบัน) + เส้น Trend
+        const ctxBar70 = document.getElementById('barChart70').getContext('2d');
+        const gradBar70 = ctxBar70.createLinearGradient(0, 0, 0, 420);
+        gradBar70.addColorStop(0, 'rgba(192, 132, 252, 0.95)');
+        gradBar70.addColorStop(1, 'rgba(168, 85, 247, 0.7)');
+
+        const totals70 = monthsFy70.map((_, m) =>
+            institutions.reduce((sum, inst) => sum + inst.samun70[m] + inst.somtob70[m], 0)
+        );
+
+        new Chart(ctxBar70, {
+            type: 'bar',
+            data: {
+                labels: monthsFy70,
+                datasets: [
+                    {
+                        type: 'bar',
+                        label: 'ยอดรวมสมาชิก ปีงบ 70 (คน)',
+                        data: totals70,
+                        backgroundColor: gradBar70,
+                        borderColor: '#9333ea',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        labelColor: '#6b21a8',
+                        order: 2
+                    },
+                    {
+                        type: 'line',
+                        label: 'เส้น Trend ยอดรวมสมาชิก ปีงบ 70',
+                        data: totals70,
+                        borderColor: '#581c87',
+                        backgroundColor: 'transparent',
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#581c87',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        tension: 0.3,
+                        labelColor: '#581c87',
+                        showValueLabel: false,
+                        order: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    tooltip: { mode: 'index', intersect: false },
+                    dataLabels: { enabled: true, decimals: 0, suffix: '' }
+                },
+                scales: { y: { beginAtZero: true, suggestedMax: 4200 } }
+            }
+        });
+
+        // 11) ค่าเฉลี่ยร้อยละ (%) Trend การร่วมดำเนินธุรกิจสมาชิกสามัญรายเดือน ปีงบ 69 (14 สถาบัน)
+        const ctxLine69 = document.getElementById('lineChart69').getContext('2d');
+        const gradLine69 = ctxLine69.createLinearGradient(0, 0, 0, 420);
+        gradLine69.addColorStop(0, 'rgba(16, 185, 129, 0.35)');
+        gradLine69.addColorStop(1, 'rgba(16, 185, 129, 0.02)');
+
+        const avgPct69 = monthsFy69.map((_, m) => {
+            const valid = institutions.map(inst => inst.pct69[m]).filter(v => v > 0);
+            return valid.length ? parseFloat((valid.reduce((a, b) => a + b, 0) / valid.length).toFixed(2)) : 0;
+        });
+
+        new Chart(ctxLine69, {
+            type: 'line',
+            data: {
+                labels: monthsFy69,
+                datasets: [{
+                    label: 'ค่าเฉลี่ยร้อยละ (%) ปีงบ 69', data: avgPct69,
+                    borderColor: '#10b981', backgroundColor: gradLine69,
+                    fill: true, tension: 0.35, borderWidth: 3,
+                    pointRadius: 5, pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#10b981', pointBorderWidth: 2, labelColor: '#065f46'
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { dataLabels: { enabled: true, decimals: 2, suffix: '%' } },
+                scales: { y: { beginAtZero: false, min: 70, max: 100, ticks: { callback: v => v + '%' } } }
+            }
+        });
+
+        // 12) ค่าเฉลี่ยร้อยละ (%) Trend การร่วมดำเนินธุรกิจสมาชิกสามัญรายเดือน ปีงบ 70 (14 สถาบัน)
+        const ctxLine70 = document.getElementById('lineChart70').getContext('2d');
+        const gradLine70 = ctxLine70.createLinearGradient(0, 0, 0, 420);
+        gradLine70.addColorStop(0, 'rgba(245, 158, 11, 0.35)');
+        gradLine70.addColorStop(1, 'rgba(245, 158, 11, 0.02)');
+
+        const avgPct70 = monthsFy70.map((_, m) => {
+            const valid = institutions.map(inst => inst.pct70[m]).filter(v => v > 0);
+            return valid.length ? parseFloat((valid.reduce((a, b) => a + b, 0) / valid.length).toFixed(2)) : 0;
+        });
+
+        new Chart(ctxLine70, {
+            type: 'line',
+            data: {
+                labels: monthsFy70,
+                datasets: [{
+                    label: 'ค่าเฉลี่ยร้อยละ (%) ปีงบ 70', data: avgPct70,
+                    borderColor: '#f59e0b', backgroundColor: gradLine70,
+                    fill: true, tension: 0.35, borderWidth: 3,
+                    pointRadius: 5, pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#f59e0b', pointBorderWidth: 2, labelColor: '#92400e'
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { dataLabels: { enabled: true, decimals: 2, suffix: '%' } },
+                scales: { y: { beginAtZero: true, max: 105, ticks: { callback: v => v <= 100 ? v + '%' : '' } } }
+            }
+        });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        buildTables();
+        populateSelects();
+        updatePieChart();
+        updateInstitutionChart69();
+        updateInstitutionChart70();
+        updatePctPieChart();
+        updatePercentChart69();
+        updatePercentChart70();
+        initStaticCharts();
+    });
+</script>
+
+</body>
+</html>
